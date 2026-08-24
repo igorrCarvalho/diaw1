@@ -97,6 +97,34 @@ app.post("/produtos", (req, res) => {
   res.status(201).json(novoProduto);
 });
 
+// PUT /produtos/:id - altera um produto existente
+app.put("/produtos/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const indice = produtos.findIndex((p) => p.id === id);
+
+  if (indice === -1) {
+    return res.status(404).json({ erro: "Produto nao encontrado" });
+  }
+
+  const erros = validarProduto(req.body);
+
+  if (erros.length > 0) {
+    return res.status(400).json({ erro: "Dados invalidos", detalhes: erros });
+  }
+
+  const produtoAtualizado = {
+    id: id,
+    descricao: req.body.descricao,
+    preco: req.body.preco,
+    categoria: req.body.categoria,
+    estoque: req.body.estoque,
+  };
+
+  produtos[indice] = produtoAtualizado;
+
+  res.status(200).json(produtoAtualizado);
+});
+
 app.listen(PORTA, () => {
   console.log("Servidor rodando na porta " + PORTA);
 });
