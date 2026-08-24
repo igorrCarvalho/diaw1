@@ -58,6 +58,20 @@ function validarProduto(dados) {
   return erros;
 }
 
+// rota inicial, so para saber que a API esta no ar
+app.get("/", (req, res) => {
+  res.json({
+    mensagem: "API de Produtos",
+    rotas: [
+      "GET /produtos",
+      "GET /produtos/:id",
+      "POST /produtos",
+      "PUT /produtos/:id",
+      "DELETE /produtos/:id",
+    ],
+  });
+});
+
 // GET /produtos - lista todos os produtos
 app.get("/produtos", (req, res) => {
   res.status(200).json(produtos);
