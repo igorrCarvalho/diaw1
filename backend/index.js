@@ -35,6 +35,11 @@ let produtos = [
 // guarda o proximo id que sera usado no cadastro
 let proximoId = 4;
 
+// GET /produtos - lista todos os produtos
+app.get("/produtos", (req, res) => {
+  res.status(200).json(produtos);
+});
+
 app.listen(PORTA, () => {
   console.log("Servidor rodando na porta " + PORTA);
 });
