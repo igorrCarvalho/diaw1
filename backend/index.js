@@ -153,6 +153,11 @@ app.delete("/produtos/:id", (req, res) => {
   res.status(204).send();
 });
 
+// qualquer outra rota que nao existe
+app.use((req, res) => {
+  res.status(404).json({ erro: "Rota nao encontrada" });
+});
+
 app.listen(PORTA, () => {
   console.log("Servidor rodando na porta " + PORTA);
 });
