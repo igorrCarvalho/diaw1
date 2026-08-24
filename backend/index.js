@@ -125,6 +125,20 @@ app.put("/produtos/:id", (req, res) => {
   res.status(200).json(produtoAtualizado);
 });
 
+// DELETE /produtos/:id - exclui um produto
+app.delete("/produtos/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const indice = produtos.findIndex((p) => p.id === id);
+
+  if (indice === -1) {
+    return res.status(404).json({ erro: "Produto nao encontrado" });
+  }
+
+  produtos.splice(indice, 1);
+
+  res.status(204).send();
+});
+
 app.listen(PORTA, () => {
   console.log("Servidor rodando na porta " + PORTA);
 });
