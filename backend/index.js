@@ -30,10 +30,24 @@ let produtos = [
     categoria: "Monitores",
     estoque: 8,
   },
+  {
+    id: 4,
+    descricao: "Cadeira Gamer",
+    preco: 1199.0,
+    categoria: "Móveis",
+    estoque: 5,
+  },
+  {
+    id: 5,
+    descricao: "Headset Bluetooth",
+    preco: 199.9,
+    categoria: "Periféricos",
+    estoque: 30,
+  },
 ];
 
 // guarda o proximo id que sera usado no cadastro
-let proximoId = 4;
+let proximoId = 6;
 
 // verifica se os dados enviados pelo usuario estao corretos
 function validarProduto(dados) {
