@@ -35,6 +35,29 @@ let produtos = [
 // guarda o proximo id que sera usado no cadastro
 let proximoId = 4;
 
+// verifica se os dados enviados pelo usuario estao corretos
+function validarProduto(dados) {
+  const erros = [];
+
+  if (typeof dados.descricao !== "string" || dados.descricao.trim() === "") {
+    erros.push("descricao e obrigatoria e deve ser um texto");
+  }
+
+  if (typeof dados.preco !== "number" || dados.preco < 0) {
+    erros.push("preco e obrigatorio e deve ser um numero maior ou igual a zero");
+  }
+
+  if (typeof dados.categoria !== "string" || dados.categoria.trim() === "") {
+    erros.push("categoria e obrigatoria e deve ser um texto");
+  }
+
+  if (!Number.isInteger(dados.estoque) || dados.estoque < 0) {
+    erros.push("estoque e obrigatorio e deve ser um numero inteiro maior ou igual a zero");
+  }
+
+  return erros;
+}
+
 // GET /produtos - lista todos os produtos
 app.get("/produtos", (req, res) => {
   res.status(200).json(produtos);
@@ -50,6 +73,28 @@ app.get("/produtos/:id", (req, res) => {
   }
 
   res.status(200).json(produto);
+});
+
+// POST /produtos - cadastra um novo produto
+app.post("/produtos", (req, res) => {
+  const erros = validarProduto(req.body);
+
+  if (erros.length > 0) {
+    return res.status(400).json({ erro: "Dados invalidos", detalhes: erros });
+  }
+
+  const novoProduto = {
+    id: proximoId,
+    descricao: req.body.descricao,
+    preco: req.body.preco,
+    categoria: req.body.categoria,
+    estoque: req.body.estoque,
+  };
+
+  proximoId = proximoId + 1;
+  produtos.push(novoProduto);
+
+  res.status(201).json(novoProduto);
 });
 
 app.listen(PORTA, () => {
