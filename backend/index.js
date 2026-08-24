@@ -40,6 +40,18 @@ app.get("/produtos", (req, res) => {
   res.status(200).json(produtos);
 });
 
+// GET /produtos/:id - busca um produto pelo id
+app.get("/produtos/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const produto = produtos.find((p) => p.id === id);
+
+  if (!produto) {
+    return res.status(404).json({ erro: "Produto nao encontrado" });
+  }
+
+  res.status(200).json(produto);
+});
+
 app.listen(PORTA, () => {
   console.log("Servidor rodando na porta " + PORTA);
 });
