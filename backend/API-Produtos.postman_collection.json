@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://diaw1.onrender.com/",
+      "value": "https://diaw1.onrender.com",
       "type": "string"
     },
     {
