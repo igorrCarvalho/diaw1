@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="css/style.css">
     <title>CRUD de Produtos</title>
 </head>
 <body class="w-[100vw] h-[100vh]">
     <main class="w-full h-full flex items-center justify-center">
         <section class="">
             <article class="border border-zinc-300 rounded-lg w-fit p-5">
-                <article class="flex gap-10">
+                <article class="productRow">
                     <p>ID</p>
                     <p>Descrição</p>
                     <p>Preço</p>
@@ -18,8 +19,8 @@
                     <p>Estoque</p>
                     <p>Ações</p>
                 </article>
-                <article class="w-fill flex gap-10">
-
+                <article id="productsTableContainer" class="w-fill flex flex-col">
+                    
                 </article>
             </article>
         </section>
