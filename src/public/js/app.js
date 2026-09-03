@@ -23,6 +23,10 @@ async function getProducts() {
     return request(API_URL)
 }
 
+async function deleteProduct(id) {
+    return request(`${API_URL}/${id}`, { method: "DELETE" })
+}
+
 async function createProduct(product) {
     return request(API_URL, {
         method: "POST",
@@ -70,7 +74,13 @@ function buildProductCard(product) {
         card.appendChild(celula)
     })
 
-    card.appendChild(document.createElement("p"))
+    const acoes = document.createElement("p")
+    acoes.className = "flex gap-2"
+    acoes.innerHTML = `
+        <button type="button" data-action="delete"
+            class="border border-red-300 text-red-700 rounded px-2 cursor-pointer">Excluir</button>
+    `
+    card.appendChild(acoes)
 
     return card
 }
@@ -88,6 +98,31 @@ async function loadProducts() {
     const products = await getProducts()
     buildProductsTable(products)
 }
+
+// um listener no container atende os botoes de todas as linhas
+tableContainer.addEventListener("click", async (event) => {
+    const botao = event.target.closest("button[data-action]")
+
+    if (!botao) {
+        return
+    }
+
+    const id = Number(botao.closest(".productCard").dataset.id)
+
+    if (botao.dataset.action === "delete") {
+        if (!confirm(`Excluir o produto ${id}?`)) {
+            return
+        }
+
+        try {
+            await deleteProduct(id)
+            await loadProducts()
+            showFeedback("Produto excluido com sucesso")
+        } catch (error) {
+            showFeedback(error.message, true)
+        }
+    }
+})
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault()
