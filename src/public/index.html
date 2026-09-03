@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +7,49 @@
     <link rel="stylesheet" href="css/style.css">
     <title>CRUD de Produtos</title>
 </head>
-<body class="w-[100vw] h-[100vh]">
-    <main class="w-full h-full flex items-center justify-center">
-        <section class="">
-            <article class="border border-zinc-300 rounded-lg w-fit p-5">
-                <article class="productRow">
+<body class="w-[100vw] min-h-[100vh] bg-zinc-50">
+    <main class="w-full min-h-[100vh] flex items-center justify-center p-8">
+        <section class="flex flex-col gap-6">
+            <form id="productForm" class="border border-zinc-300 rounded-lg bg-white p-5 flex flex-col gap-4">
+                <h2 id="formTitle" class="font-semibold">Novo produto</h2>
+
+                <div class="flex gap-4 flex-wrap">
+                    <label class="flex flex-col gap-1">
+                        <span class="text-sm text-zinc-600">Descrição</span>
+                        <input id="descricao" name="descricao" type="text" required
+                            class="border border-zinc-300 rounded px-2 py-1 w-64">
+                    </label>
+
+                    <label class="flex flex-col gap-1">
+                        <span class="text-sm text-zinc-600">Preço</span>
+                        <input id="preco" name="preco" type="number" step="0.01" min="0" required
+                            class="border border-zinc-300 rounded px-2 py-1 w-32">
+                    </label>
+
+                    <label class="flex flex-col gap-1">
+                        <span class="text-sm text-zinc-600">Categoria</span>
+                        <input id="categoria" name="categoria" type="text" required
+                            class="border border-zinc-300 rounded px-2 py-1 w-44">
+                    </label>
+
+                    <label class="flex flex-col gap-1">
+                        <span class="text-sm text-zinc-600">Estoque</span>
+                        <input id="estoque" name="estoque" type="number" step="1" min="0" required
+                            class="border border-zinc-300 rounded px-2 py-1 w-28">
+                    </label>
+                </div>
+
+                <div class="flex gap-2 items-center">
+                    <button id="submitButton" type="submit"
+                        class="bg-zinc-800 text-white rounded px-4 py-1 cursor-pointer">Cadastrar</button>
+                    <button id="cancelButton" type="button"
+                        class="border border-zinc-300 rounded px-4 py-1 cursor-pointer hidden">Cancelar</button>
+                    <p id="feedback" class="text-sm"></p>
+                </div>
+            </form>
+
+            <article class="border border-zinc-300 rounded-lg bg-white w-fit p-5">
+                <article class="productRow font-semibold border-b border-zinc-200 pb-2">
                     <p>ID</p>
                     <p>Descrição</p>
                     <p>Preço</p>
@@ -19,8 +57,7 @@
                     <p>Estoque</p>
                     <p>Ações</p>
                 </article>
-                <article id="productsTableContainer" class="w-fill flex flex-col">
-                    
+                <article id="productsTableContainer" class="w-full flex flex-col">
                 </article>
             </article>
         </section>

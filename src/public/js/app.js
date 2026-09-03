@@ -1,43 +1,112 @@
-async function getProducts() {
-    const response = await fetch("/produtos")
+const API_URL = "/produtos"
+
+const tableContainer = document.getElementById("productsTableContainer")
+const form = document.getElementById("productForm")
+const feedback = document.getElementById("feedback")
+
+// faz a requisicao e transforma erro da API em Error com mensagem legivel
+async function request(url, options) {
+    const response = await fetch(url, options)
 
     if (!response.ok) {
-        throw new Error(`Falha ao buscar produtos: ${response.status}`)
+        const corpo = await response.json().catch(() => null)
+        const mensagem = corpo?.erro ?? `Erro ${response.status}`
+        const detalhes = corpo?.detalhes ? `: ${corpo.detalhes.join(", ")}` : ""
+        throw new Error(mensagem + detalhes)
     }
 
-    return response.json()
+    // DELETE responde 204 sem corpo
+    return response.status === 204 ? null : response.json()
+}
+
+async function getProducts() {
+    return request(API_URL)
+}
+
+async function createProduct(product) {
+    return request(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
+    })
+}
+
+function showFeedback(message, isError = false) {
+    feedback.textContent = message
+    feedback.className = isError ? "text-sm text-red-600" : "text-sm text-green-700"
+}
+
+// le os campos do formulario ja convertidos para os tipos que a API espera
+function readForm() {
+    return {
+        descricao: document.getElementById("descricao").value.trim(),
+        preco: Number(document.getElementById("preco").value),
+        categoria: document.getElementById("categoria").value.trim(),
+        estoque: Number(document.getElementById("estoque").value),
+    }
+}
+
+function resetForm() {
+    form.reset()
 }
 
 function buildProductCard(product) {
     const card = document.createElement("article")
-    card.className = "productCard productRow w-full"
+    card.className = "productCard productRow w-full py-1"
+    card.dataset.id = product.id
 
-    card.innerHTML = `
-        <p>${product.id}</p>
-        <p>${product.descricao}</p>
-        <p>${product.preco}</p>
-        <p>${product.categoria}</p>
-        <p>${product.estoque}</p>
-        <p></p>
-    `
+    const valores = [
+        product.id,
+        product.descricao,
+        product.preco.toFixed(2),
+        product.categoria,
+        product.estoque,
+    ]
+
+    // textContent evita que a descricao cadastrada seja interpretada como html
+    valores.forEach((valor) => {
+        const celula = document.createElement("p")
+        celula.textContent = valor
+        card.appendChild(celula)
+    })
+
+    card.appendChild(document.createElement("p"))
 
     return card
 }
 
 function buildProductsTable(products) {
-    const container = document.getElementById("productsTableContainer")
+    // limpa antes de redesenhar, senao as linhas se acumulam a cada atualizacao
+    tableContainer.innerHTML = ""
 
     products.forEach((product) => {
-        container.appendChild(buildProductCard(product))
+        tableContainer.appendChild(buildProductCard(product))
     })
 }
 
+async function loadProducts() {
+    const products = await getProducts()
+    buildProductsTable(products)
+}
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault()
+
+    try {
+        await createProduct(readForm())
+        resetForm()
+        await loadProducts()
+        showFeedback("Produto cadastrado com sucesso")
+    } catch (error) {
+        showFeedback(error.message, true)
+    }
+})
+
 async function main() {
     try {
-        const products = await getProducts()
-        buildProductsTable(products)
+        await loadProducts()
     } catch (error) {
-        console.error(error)
+        showFeedback(error.message, true)
     }
 }
 
