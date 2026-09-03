@@ -4,7 +4,7 @@
   "description": "API RESTful de Produtos - atividade pratica",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "engines": {
     "node": ">=18"
