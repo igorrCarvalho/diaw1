@@ -3,6 +3,12 @@ const API_URL = "/produtos"
 const tableContainer = document.getElementById("productsTableContainer")
 const form = document.getElementById("productForm")
 const feedback = document.getElementById("feedback")
+const formTitle = document.getElementById("formTitle")
+const submitButton = document.getElementById("submitButton")
+const cancelButton = document.getElementById("cancelButton")
+
+// id do produto em edicao; null significa que o formulario esta em modo de cadastro
+let editingId = null
 
 // faz a requisicao e transforma erro da API em Error com mensagem legivel
 async function request(url, options) {
@@ -21,6 +27,18 @@ async function request(url, options) {
 
 async function getProducts() {
     return request(API_URL)
+}
+
+async function getProduct(id) {
+    return request(`${API_URL}/${id}`)
+}
+
+async function updateProduct(id, product) {
+    return request(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
+    })
 }
 
 async function deleteProduct(id) {
@@ -52,6 +70,25 @@ function readForm() {
 
 function resetForm() {
     form.reset()
+    editingId = null
+    formTitle.textContent = "Novo produto"
+    submitButton.textContent = "Cadastrar"
+    cancelButton.classList.add("hidden")
+}
+
+// busca o produto na API e coloca o formulario em modo de edicao
+async function startEdit(id) {
+    const product = await getProduct(id)
+
+    document.getElementById("descricao").value = product.descricao
+    document.getElementById("preco").value = product.preco
+    document.getElementById("categoria").value = product.categoria
+    document.getElementById("estoque").value = product.estoque
+
+    editingId = product.id
+    formTitle.textContent = `Editando produto ${product.id}`
+    submitButton.textContent = "Salvar"
+    cancelButton.classList.remove("hidden")
 }
 
 function buildProductCard(product) {
@@ -77,6 +114,8 @@ function buildProductCard(product) {
     const acoes = document.createElement("p")
     acoes.className = "flex gap-2"
     acoes.innerHTML = `
+        <button type="button" data-action="edit"
+            class="border border-zinc-300 rounded px-2 cursor-pointer">Editar</button>
         <button type="button" data-action="delete"
             class="border border-red-300 text-red-700 rounded px-2 cursor-pointer">Excluir</button>
     `
@@ -109,6 +148,17 @@ tableContainer.addEventListener("click", async (event) => {
 
     const id = Number(botao.closest(".productCard").dataset.id)
 
+    if (botao.dataset.action === "edit") {
+        try {
+            await startEdit(id)
+            showFeedback("")
+        } catch (error) {
+            showFeedback(error.message, true)
+        }
+
+        return
+    }
+
     if (botao.dataset.action === "delete") {
         if (!confirm(`Excluir o produto ${id}?`)) {
             return
@@ -128,13 +178,29 @@ form.addEventListener("submit", async (event) => {
     event.preventDefault()
 
     try {
-        await createProduct(readForm())
+        const product = readForm()
+
+        if (editingId === null) {
+            await createProduct(product)
+        } else {
+            await updateProduct(editingId, product)
+        }
+
+        const mensagem = editingId === null
+            ? "Produto cadastrado com sucesso"
+            : "Produto alterado com sucesso"
+
         resetForm()
         await loadProducts()
-        showFeedback("Produto cadastrado com sucesso")
+        showFeedback(mensagem)
     } catch (error) {
         showFeedback(error.message, true)
     }
+})
+
+cancelButton.addEventListener("click", () => {
+    resetForm()
+    showFeedback("")
 })
 
 async function main() {

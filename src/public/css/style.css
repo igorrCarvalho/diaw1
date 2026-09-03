@@ -1,7 +1,7 @@
 /* colunas da tabela de produtos: cabecalho e linhas usam o mesmo template */
 .productRow {
     display: grid;
-    grid-template-columns: 3rem minmax(12rem, 1fr) 6rem 8rem 5rem 6rem;
+    grid-template-columns: 3rem minmax(12rem, 1fr) 6rem 8rem 5rem 11rem;
     gap: 2.5rem;
     align-items: center;
 }
