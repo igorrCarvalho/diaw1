@@ -1,9 +1,13 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 
 // permite receber JSON no corpo das requisicoes
 app.use(express.json());
+
+// serve o frontend (html, css e js) da pasta public
+app.use(express.static(path.join(__dirname, "public")));
 
 const PORTA = process.env.PORT || 3000;
 
@@ -72,8 +76,8 @@ function validarProduto(dados) {
   return erros;
 }
 
-// rota inicial, so para saber que a API esta no ar
-app.get("/", (req, res) => {
+// rota informativa da API (a raiz entrega o index.html do frontend)
+app.get("/api", (req, res) => {
   res.json({
     mensagem: "API de Produtos",
     rotas: [
@@ -166,7 +170,7 @@ app.delete("/produtos/:id", (req, res) => {
 
   res.status(204).send();
 });
-app.use(express.static("public"));
+
 app.listen(PORTA, () => {
   console.log("Servidor rodando na porta " + PORTA);
 });
